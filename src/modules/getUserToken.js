@@ -54,7 +54,7 @@ function post_user_token(portal_url, username, password, enterprise_account, one
   })
   ;
 }
-
+//TODO CAmelCase
 export function get_user_token(enterprise_account, username, password, endpoint, one_time_password){
   return get_portal_url(enterprise_account, endpoint)
    .then((portal_url) => post_user_token(portal_url,username, password, enterprise_account, one_time_password))
