@@ -8,18 +8,46 @@ inputElement.addEventListener("change", function(){
 
   get_user_token('acme', 'bonjour', 'Qwerty123', 'https://portal.integration.xmedius.com')
     .then(result => {
-      new SendSecure.JsonClient( result,
+      var jsonClient = new SendSecure.JsonClient( result,
                                  'acme',
                                  'https://portal.integration.xmedius.com'
-                               ).newSafebox('mail@mail.com')
+                               );
+      jsonClient.newSafebox('mail@mail.com')
         .then(result => {
-            new SendSecure.JsonClient( 'USER|09ca5098-997b-4d3b-a105-4ae7fd66e216',
-                                       'acme',
-                                       'https://portal.integration.xmedius.com'
-                                     ).uploadFile(result.upload_url, file)
-            .then(response => console.log(response))
+          console.log(result);
+            jsonClient.uploadFile(result.upload_url, file)
+            .then(response => {
+              console.log(response)
+              var safebox = {
+                safebox: {
+                  guid: result.guid,
+                  recipients: [
+                    {
+                      first_name: "",
+                      last_name: "",
+                      company_name: "",
+                      email: "allan.seymour@xmedius.com"
+                    }
+                  ],
+                  subject: "Donec rutrum congue leo eget malesuada. ",
+                  message: "Donec rutrum congue leo eget malesuada. Proin eget tortor risus. Nulla quis lorem ut libero malesuada feugiat. Nulla porttitor accumsan tincidunt...",
+                  document_ids: [ response.temporary_document.document_guid ],
+                  security_profile_id: 39,
+                  reply_enabled: true,
+                  expiration_value: 1,
+                  expiration_unit: "months",
+                  retention_period_type: "discard_at_expiration",
+                  encrypt_message:  true,
+                  double_encryption: false,
+                  public_encryption_key: result.public_encryption_key,
+                  notification_language: "en"
+                }
+              }
+              jsonClient.commitSafebox(JSON.stringify(safebox))
+              .then(response => console.log(response))
+              .catch(function(err) { console.log(err); })
+            })
             .catch(function(err) { console.log(err); })
-
         })
      })
     .catch(function(err) { console.log(err); })

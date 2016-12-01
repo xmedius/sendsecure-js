@@ -83,12 +83,30 @@ export default class JsonClient {
   }
 
   commitSafebox(safeboxJson){
-    const suffix = `api/v2/safebox?locale=${this.locale}`;
-    let request = new Request(url , {
-      headers: new Headers({
-        'Authorization-Token': this.apiToken,
+    const suffix = `api/v2/safeboxes?locale=${this.locale}`;
+    return this._getSendSecureEndpoint(this.enterpriseAccount, this.endpoint)
+      .then((sendsecureEndpoint) => {
+        const url = `${sendsecureEndpoint}${suffix}`;
+
+        let request = new Request(url , {
+          headers: new Headers({
+            'Authorization-Token': this.apiToken,
+            'Content-Type': 'application/json'
+          })
+        })
+
+        return fetch(request, {
+        	method: 'POST',
+        	body: safeboxJson,
+        }).then (response => {
+          if (response.ok){
+            return response.json()
+          }  else {
+            throw new Exception.SendSecureException(response.status, response.statusText);
+          }
+        })
       })
-    })
+
   }
 
 }
