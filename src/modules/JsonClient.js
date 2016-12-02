@@ -51,12 +51,12 @@ export default class JsonClient {
     return this._makeRequest(suffix)
   }
 
-  getSecurityProfiles(userEmail) {
+  securityProfiles(userEmail) {
     const suffix = `api/v2/enterprises/${this.enterpriseAccount}/security_profiles?user_email=${userEmail}&locale=${this.locale}`;
     return this._makeRequest(suffix)
   }
 
-  getEnterpriseSettings(userEmail) {
+  enterpriseSettings(userEmail) {
     const suffix = `api/v2/enterprises/${this.enterpriseAccount}/settings?locale=${this.locale}`;
     return this._makeRequest(suffix)
   }

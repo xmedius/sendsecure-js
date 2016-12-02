@@ -10,9 +10,4 @@ export default class EnterpriseSettings {
       this.extensionFilter = new ExtensionFilter(this.extensionFilter);
     }
   }
-
-  defaultSecurityProfile(){
-
-  }
-
 }
