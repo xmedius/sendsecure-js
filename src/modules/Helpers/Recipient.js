@@ -21,7 +21,6 @@ export default class Recipient {
     }
   }
 
-  //TODO add contactMethods + get contactMethods
   underscorify(){
     const underscorify = (s) => s.replace(/([A-Z])/g, function(m){return `_${m.toLowerCase()}`;});
     let result = _reduce(this, (res, value, key) => {

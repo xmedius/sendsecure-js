@@ -1,4 +1,3 @@
-
 import { get_user_token } from './modules/getUserToken.js';
 import SendSecure from './modules/SendSecure.js'
 
@@ -75,10 +74,14 @@ import SendSecure from './modules/SendSecure.js'
 //
 
 //const inst = new  SendSecure.Client('apiToken', 'enterpriseAccount', "https://portal.integration.xmedius.com")
+var inputElement = document.getElementById("input");
+inputElement.addEventListener("change", function(){
+  var file = this.files[0]; /* now you can work with the file list */
+
 SendSecure.Client.getUserToken('acme', '<username>', '<password>', 'https://portal.integration.xmedius.com')
   .then(result => {
     let safebox = new SendSecure.Helpers.Safebox('mail@mail.com')
-    let recipient = new SendSecure.Helpers.Recipient( {email: '<mail>', first_name: 'Allan', last_name: 'Seymour'} );
+    let recipient = new SendSecure.Helpers.Recipient( {email: '<email>', first_name: 'Allan', last_name: 'Seymour'} );
     let contactMethod = new SendSecure.Helpers.ContactMethod();
     contactMethod.destinationType = 'cell_phone'
     contactMethod.destination =  '+15145550000'
@@ -87,17 +90,22 @@ SendSecure.Client.getUserToken('acme', '<username>', '<password>', 'https://port
     safebox.subject = 'Hello World';
     safebox.message = 'This is an Hello World Message';
     safebox.recipients = [ recipient ]
-    console.log(safebox.recipients)
+    safebox.attachments = [ new SendSecure.Helpers.Attachment(file)];
     let client = new  SendSecure.Client(result, 'acme', "https://portal.integration.xmedius.com");
-    client.securityProfiles('mail@mail.com')
-      .then( securityProfiles => {
-        safebox.securityProfile = securityProfiles[0];
-        client.initializeSafebox(safebox)
-          .then(e => {
-            client.commitSafebox(e)
-              .then(e => console.log(e))
-          })
-      })
+    client.submitSafebox(safebox)
+    // client.securityProfiles('mail@mail.com')
+    //   .then( securityProfiles => {
+    //     safebox.securityProfile = securityProfiles[0];
+    //     client.initializeSafebox(safebox)
+    //       .then(sbx => {
+    //         client.uploadAttachment(sbx, new SendSecure.Helpers.Attachment(file))
+    //         .then( attachment =>  {
+    //           sbx.attachments = [attachment];
+    //           client.commitSafebox(sbx)
+    //             .then(e => console.log(e))
+    //         })
+    //       })
+    //   })
       //.securityProfiles('mail@mail.com')
       //.enterpriseSettings()
       //.initializeSafebox(safebox)
@@ -109,6 +117,7 @@ SendSecure.Client.getUserToken('acme', '<username>', '<password>', 'https://port
     //     .then(e => client.commitSafebox(e))
     // })
   })
+})
 //inst.initializeSafebox(new SendSecure.Helpers.Safebox('mail@mail.com'))
 // var inputElement = document.getElementById("input");
 // inputElement.addEventListener("change", function(){

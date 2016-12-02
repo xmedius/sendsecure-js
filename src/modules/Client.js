@@ -19,7 +19,30 @@ export default class Client {
   }
 
   submitSafebox(safebox){
+    this.initializeSafebox(safebox)
+      .then(sbx => {
+        console.log(sbx)
+        sbx.attachments.forEach(elt => {
+          this.uploadAttachment(sbx, new Helpers.Attachment(elt.file))
+          .then( attachment =>  {
+            sbx.attachments = [attachment];
+            if (!sbx.securityProfile){
+              this.defaultSecurityProfile(sbx.userEmail)
+                .then( defaultSecurityProfile => {
+                  sbx.securityProfile = defaultSecurityProfile
+                  this.commitSafebox(sbx)
+                    .then(e => console.log(e))
+                })
+            }
+            else {
+              client.commitSafebox(sbx)
+                .then(e => console.log(e))
+            }
+          })
+        })
 
+
+      })
   }
 
   initializeSafebox(safebox){
@@ -46,7 +69,7 @@ export default class Client {
   uploadAttachment(safebox, attachment){
     return this.jsonClient.uploadFile(safebox.uploadUrl, attachment.file)
       .then(result => {
-        attachment.guid = result.temporary_document.guid
+        attachment.guid = result.temporary_document.document_guid
         return attachment;
       })
   }

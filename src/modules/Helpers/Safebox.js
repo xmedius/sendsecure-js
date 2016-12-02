@@ -14,14 +14,6 @@ export default class Safebox {
       'message',
       'replyEnabled',
       'uploadUrl',
-      //'groupReplies',
-      //'expirationValue',
-      //'expirationUnit',
-      //'retentionPeriodType',
-      //'retentionPeriodValue',
-      //'retentionPeriodUnit',
-      //'encryptMessage',
-      //'doubleEncryption',
       'publicEncryptionKey',
       'notificationLanguage',
     ], (v) => this[v] = null);
@@ -32,7 +24,9 @@ export default class Safebox {
   toJson(){
     const underscorify = (s) => s.replace(/([A-Z])/g, function(m){return `_${m.toLowerCase()}`;});
     let profile = this.securityProfile;
+    let attachments = this.attachments;
     delete this.securityProfile;
+    delete this.attachments;
     let result = _reduce(this, (res, value, key) => {
       let json = null;
       if (_isObject(value)){
@@ -44,10 +38,14 @@ export default class Safebox {
       } else {
         json = value;
       }
-      res[underscorify(key)] = json;//_isObject(value) ? (_isArray(value) ? _map(value, (e) => value.toJson()): value.toJson()) : value;
+      res[underscorify(key)] = json;
       return res;
     }, {})
     result.security_profile_id = profile.id;
+    result.document_ids = _reduce(attachments, (result, att) => {
+      result.push(att.guid)
+      return result;
+    }, [])
     result.group_replies = profile.groupReplies.value;
     result.expiration_value = profile.expirationValue.value;
     result.expiration_unit = profile.expirationUnit.value;
