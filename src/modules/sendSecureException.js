@@ -3,13 +3,6 @@ export class SendSecureException {
     this.code = code;
     this.message = message;
   }
-
-  getCode (){
-    return this.code;
-  }
-  getMessage() {
-    return this.message;
-  }
 }
 
 export class UnexpectedServerResponseException extends SendSecureException {

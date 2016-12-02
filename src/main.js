@@ -8,16 +8,11 @@ inputElement.addEventListener("change", function(){
 
   get_user_token('acme', 'bonjour', 'Qwerty123', 'https://portal.integration.xmedius.com')
     .then(result => {
-      var jsonClient = new SendSecure.JsonClient( result,
-                                 'acme',
-                                 'https://portal.integration.xmedius.com'
-                               );
+      var jsonClient = new SendSecure.JsonClient( result, 'acme', 'https://portal.integration.xmedius.com' );
       jsonClient.newSafebox('mail@mail.com')
         .then(result => {
-          console.log(result);
             jsonClient.uploadFile(result.upload_url, file)
             .then(response => {
-              console.log(response)
               var safebox = {
                 safebox: {
                   guid: result.guid,
@@ -59,16 +54,31 @@ get_user_token('acme', 'bonjour', 'Qwerty123', 'https://portal.integration.xmedi
                                'acme',
                                'https://portal.integration.xmedius.com'
                              ).getSecurityProfiles('mail@mail.com')
-      .then(result => console.log(result))
+      .then(result => {
+        console.log(result.security_profiles.map((e) => new SendSecure.Helpers.SecurityProfile(e)))
+      })
    })
   .catch(function(err) { console.log(err); })
 
 get_user_token('acme', 'bonjour', 'Qwerty123', 'https://portal.integration.xmedius.com')
   .then(result => {
+    console.log(result)
     new SendSecure.JsonClient( result,
                                'acme',
                                'https://portal.integration.xmedius.com'
                              ).getEnterpriseSettings()
-      .then(result => console.log(result))
+      .then(result => console.log(new SendSecure.Helpers.EnterpriseSettings(result)))
+      .catch(function(err) { console.log(err); })
    })
   .catch(function(err) { console.log(err); })
+
+
+const inst = new  SendSecure.Helpers.EnterpriseSettings();
+inst.tototootot = 'test';
+// var inputElement = document.getElementById("input");
+// inputElement.addEventListener("change", function(){
+//   var file = this.files[0]; /* now you can work with the file list */
+//   var attachment = new SendSecure.Helpers.Attachment(file);
+//   attachment.guid = "erjklfgberjkgerjkfhkerjferjkfhkerjfkerjerjerjg";
+//   console.log(attachment.guid);
+// });

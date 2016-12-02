@@ -25,16 +25,16 @@ export default class JsonClient {
     })
   }
 
-  _makeRequest(suffixUrl){
+  _makeRequest( suffixUrl,
+                headers = new Headers({  'Authorization-Token': this.apiToken }),
+                init = { method: 'get'} ) {
     return this._getSendSecureEndpoint(this.enterpriseAccount, this.endpoint)
       .then((sendsecureEndpoint) => {
         const url = `${sendsecureEndpoint}${suffixUrl}`
         let request = new Request(url , {
-          headers: new Headers({
-            'Authorization-Token': this.apiToken,
-          })
+          headers: headers
         })
-        return fetch(request, { method: 'get' })
+        return fetch(request, init)
           .then((response) => {
             if (response.ok){
               return response.json();
@@ -62,16 +62,11 @@ export default class JsonClient {
   }
 
   uploadFile(uploadUrl, file){
-    let request = new Request(uploadUrl , {
-      headers: new Headers({
-        'Authorization-Token': this.apiToken,
-      })
-    })
     var data = new FormData();
     data.append( 'file', file, file.name  );
 
-    return fetch(request, {
-    	method: 'POST',
+    return fetch(uploadUrl, {
+    	method: 'post',
     	body: data,
     }).then (response => {
       if (response.ok){
@@ -84,29 +79,17 @@ export default class JsonClient {
 
   commitSafebox(safeboxJson){
     const suffix = `api/v2/safeboxes?locale=${this.locale}`;
-    return this._getSendSecureEndpoint(this.enterpriseAccount, this.endpoint)
-      .then((sendsecureEndpoint) => {
-        const url = `${sendsecureEndpoint}${suffix}`;
-
-        let request = new Request(url , {
-          headers: new Headers({
-            'Authorization-Token': this.apiToken,
-            'Content-Type': 'application/json'
-          })
-        })
-
-        return fetch(request, {
-        	method: 'POST',
-        	body: safeboxJson,
-        }).then (response => {
-          if (response.ok){
-            return response.json()
-          }  else {
-            throw new Exception.SendSecureException(response.status, response.statusText);
-          }
-        })
-      })
-
+    return this._makeRequest(
+      suffix,
+      new Headers({
+        'Authorization-Token': this.apiToken,
+        'Content-Type': 'application/json'
+      }),
+      {
+        method: 'post',
+        body: safeboxJson,
+      }
+    )
   }
 
 }
