@@ -34,7 +34,6 @@ export default class Safebox {
     let profile = this.securityProfile;
     delete this.securityProfile;
     let result = _reduce(this, (res, value, key) => {
-      //console.log(value)
       let json = null;
       if (_isObject(value)){
         if (_isArray(value)){
@@ -42,7 +41,6 @@ export default class Safebox {
         } else {
           json = value.underscorify();
         }
-        //json = _isArray(value) ? _map(value, (e) => { console.log(value); return value.toJson() } ): value.toJson()
       } else {
         json = value;
       }

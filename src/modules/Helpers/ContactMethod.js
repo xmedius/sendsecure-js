@@ -11,7 +11,7 @@ export default class ContactMethod {
   underscorify(){
     const underscorify = (s) => s.replace(/([A-Z])/g, function(m){return `_${m.toLowerCase()}`;});
     let result = _reduce(this, (res, value, key) => {
-      res[underscorify(key)] = value ? (_isObject(value) ? value.toJson() : value) : null;
+      res[underscorify(key)] = value;
       return res;
     }, {})
     return result

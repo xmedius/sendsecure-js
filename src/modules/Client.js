@@ -52,7 +52,6 @@ export default class Client {
   }
 
   commitSafebox(safebox){
-    console.log(safebox)
     return this.jsonClient.commitSafebox(safebox.toJson())
   }
 

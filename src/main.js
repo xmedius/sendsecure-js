@@ -78,7 +78,7 @@ import SendSecure from './modules/SendSecure.js'
 SendSecure.Client.getUserToken('acme', '<username>', '<password>', 'https://portal.integration.xmedius.com')
   .then(result => {
     let safebox = new SendSecure.Helpers.Safebox('mail@mail.com')
-    let recipient = new SendSecure.Helpers.Recipient( {email: '<email>', first_name: 'Allan', last_name: 'Seymour'} );
+    let recipient = new SendSecure.Helpers.Recipient( {email: '<mail>', first_name: 'Allan', last_name: 'Seymour'} );
     let contactMethod = new SendSecure.Helpers.ContactMethod();
     contactMethod.destinationType = 'cell_phone'
     contactMethod.destination =  '+15145550000'

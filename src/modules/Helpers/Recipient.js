@@ -31,15 +31,14 @@ export default class Recipient {
           r = _map(value, (e) => { return e.underscorify() } )
         }
         else {
-          r = value.toJson();
+          r = value;
         }
-        //json = _isArray(value) ? _map(value, (e) => { console.log(value); return value.toJson() } ): value.toJson()
       }
       else {
         r = value;
       }
 
-      res[underscorify(key)] = value;
+      res[underscorify(key)] = r;
       return res;
     }, {})
     return result;
