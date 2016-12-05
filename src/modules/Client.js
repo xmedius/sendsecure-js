@@ -1,6 +1,7 @@
 import _find from 'lodash/find'
 import JsonClient from './JsonClient.js'
 import Helpers from './Helpers/Helpers.js'
+import { isNode } from './Utils/platform.js'
 import { get_user_token } from './getUserToken.js';
 import * as Exception from './sendSecureException.js'
 
@@ -21,28 +22,29 @@ export default class Client {
   submitSafebox(safebox){
     this.initializeSafebox(safebox)
       .then(sbx => {
-        console.log(sbx)
+        var index = 0;
         sbx.attachments.forEach(elt => {
-          this.uploadAttachment(sbx, new Helpers.Attachment(elt.file))
-          .then( attachment =>  {
-            sbx.attachments = [attachment];
-            if (!sbx.securityProfile){
-              this.defaultSecurityProfile(sbx.userEmail)
-                .then( defaultSecurityProfile => {
-                  sbx.securityProfile = defaultSecurityProfile
-                  this.commitSafebox(sbx)
-                    .then(e => console.log(e))
-                })
-            }
-            else {
-              client.commitSafebox(sbx)
-                .then(e => console.log(e))
-            }
-          })
+          this.uploadAttachment(sbx, elt)
+          .then( attachment =>  { elt = attachment; })
         })
-
-
+        return sbx;
       })
+      .then(sbx => {
+        if (!sbx.securityProfile){
+          this.defaultSecurityProfile(sbx.userEmail)
+            .then( defaultSecurityProfile => {
+              sbx.securityProfile = defaultSecurityProfile
+              this.commitSafebox(sbx)
+                .then(e => console.log(e) )
+                .catch(e => console.log(e))
+            })
+        }
+        else {
+          client.commitSafebox(sbx)
+            .then(e => console.log(e))
+        }
+      })
+      .catch (e => console.log(e))
   }
 
   initializeSafebox(safebox){
@@ -67,11 +69,21 @@ export default class Client {
   }
 
   uploadAttachment(safebox, attachment){
-    return this.jsonClient.uploadFile(safebox.uploadUrl, attachment.file)
-      .then(result => {
-        attachment.guid = result.temporary_document.document_guid
-        return attachment;
-      })
+    if (isNode){
+      return this.jsonClient.uploadFile(safebox.uploadUrl,
+          {fileStream: attachment.stream, contentType: attachment.contentType, filename: attachment.filename })
+        .then(result => {
+          attachment.guid = result.temporary_document.document_guid
+          return attachment;
+        })
+    } else {
+      return this.jsonClient.uploadFile(safebox.uploadUrl, {file: attachment.file } )
+        .then(result => {
+          attachment.guid = result.temporary_document.document_guid
+          return attachment;
+        })
+    }
+
   }
 
   commitSafebox(safebox){

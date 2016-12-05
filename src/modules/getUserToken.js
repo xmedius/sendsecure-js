@@ -1,3 +1,4 @@
+import { fetch, FormData } from './Utils/platform.js'
 import * as Exception from './sendSecureException.js'
 
 function get_portal_url(enterprise_account, endpoint){

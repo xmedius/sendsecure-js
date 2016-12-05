@@ -28,6 +28,9 @@
     "rollup-watch": "^2.5.0"
   },
   "dependencies": {
-    "lodash": "^4.17.2"
+    "form-data": "^2.1.2",
+    "lodash": "^4.17.2",
+    "mime-types": "^2.1.13",
+    "node-fetch": "^1.6.3"
   }
 }
