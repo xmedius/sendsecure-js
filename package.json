@@ -25,7 +25,9 @@
     "rollup-plugin-commonjs": "^5.0.5",
     "rollup-plugin-eslint": "^3.0.0",
     "rollup-plugin-node-resolve": "^2.0.0",
-    "rollup-watch": "^2.5.0"
+    "rollup-plugin-uglify": "^1.0.1",
+    "rollup-watch": "^2.5.0",
+    "uglify-js": "^2.7.5"
   },
   "dependencies": {
     "form-data": "^2.1.2",

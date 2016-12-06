@@ -1,7 +1,9 @@
-export class SendSecureException {
-  constructor (code, message) {
+export class SendSecureException extends Error {
+  constructor (code, message, responseContent) {
+    super();
     this.code = code;
     this.message = message;
+    this.responseContent = responseContent;
   }
 }
 

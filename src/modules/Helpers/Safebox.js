@@ -1,10 +1,10 @@
-import _isObject from 'lodash/isObject'
-import _isArray from 'lodash/isArray'
 import _reduce from 'lodash/reduce'
 import _map from 'lodash/map'
+import BaseHelper from './BaseHelper.js'
 
-export default class Safebox {
+export default class Safebox extends BaseHelper {
   constructor (userEmail){
+    super();
     _map( [
       'guid',
       'recipients',
@@ -18,29 +18,16 @@ export default class Safebox {
       'notificationLanguage',
     ], (v) => this[v] = null);
     this.userEmail = userEmail;
+    Object.preventExtensions(this);
   }
 
 
   toJson(){
-    const underscorify = (s) => s.replace(/([A-Z])/g, function(m){return `_${m.toLowerCase()}`;});
     let profile = this.securityProfile;
     let attachments = this.attachments;
     delete this.securityProfile;
     delete this.attachments;
-    let result = _reduce(this, (res, value, key) => {
-      let json = null;
-      if (_isObject(value)){
-        if (_isArray(value)){
-          json = _map(value, (e) => { return e.underscorify() } )
-        } else {
-          json = value.underscorify();
-        }
-      } else {
-        json = value;
-      }
-      res[underscorify(key)] = json;
-      return res;
-    }, {})
+    let result = this.underscorifyKeys();
     result.security_profile_id = profile.id;
     result.document_ids = _reduce(attachments, (result, att) => {
       result.push(att.guid)

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <input type="file" id="input">
+    <script  src="../../build/sendsecure.iife.min.js"></script>
+    <script type="text/javascript">
+      var inputElement = document.getElementById("input");
+      inputElement.addEventListener("change", function(){
+        var file = this.files[0]; /* now you can work with the file list */
+
+      SendSecure.Client.getUserToken('ck4', 'allan.seymour@xmedius.com', '<password>', 'deviceid', 'deviceName', 'theApplicationType', 'https://portal.integration.xmedius.com')
+        .then(result => {
+          let safebox = new SendSecure.Helpers.Safebox('mail@mail.com')
+          let recipient = new SendSecure.Helpers.Recipient( {email: 'allan.seymour@xmedius.com', first_name: 'Allan', last_name: 'Seymour'} );
+          let contactMethod = new SendSecure.Helpers.ContactMethod();
+          contactMethod.destinationType = 'cell_phone'
+          contactMethod.destination =  '+15145550000'
+          recipient.contactMethods = [ contactMethod];
+          //let securityProfile = new SendSecure.Helpers.SecurityProfile
+          safebox.subject = 'Hello World';
+          safebox.message = 'This is an Hello World Message';
+          safebox.recipients = [ recipient ]
+          safebox.attachments = [ new SendSecure.Helpers.Attachment(file)];
+          let client = new  SendSecure.Client(result, 'ck4', "https://portal.integration.xmedius.com");
+          return client.submitSafebox(safebox)
+        })
+        .then(e => console.log(e))
+        .catch(e => { console.log(e) })
+      })
+    </script>
+  </body>
+</html>

@@ -1,19 +1,12 @@
 import _isObject from 'lodash/isObject'
 import _reduce from 'lodash/reduce'
-export default class ContactMethod {
-  constructor(object) {
-    if (object){
-      this.destinationType = object.destinationType;
-      this.destination = object.destination;
-    }
-  }
+import BaseHelper from './BaseHelper.js'
 
-  underscorify(){
-    const underscorify = (s) => s.replace(/([A-Z])/g, function(m){return `_${m.toLowerCase()}`;});
-    let result = _reduce(this, (res, value, key) => {
-      res[underscorify(key)] = value;
-      return res;
-    }, {})
-    return result
+export default class ContactMethod extends BaseHelper {
+  constructor(object) {
+    super();
+    var propertyOrNull = (s) => (object && s in object) ? object[s] : null;
+    this.destinationType = propertyOrNull('destinationType');
+    this.destination = propertyOrNull('destination');
   }
 }

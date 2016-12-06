@@ -33,20 +33,20 @@ export default class JsonClient {
     return this._getSendSecureEndpoint(this.enterpriseAccount, this.endpoint)
       .then((sendsecureEndpoint) => {
         const url = `${sendsecureEndpoint}${suffixUrl}`
-        // let request = new Request(url , {
-        //   headers: headers
-        // })
         return fetch(url, request)
-        .then((response) => {
-            if (response.ok){
-              return response.json();
-            }
-            else {
-              throw new Exception.SendSecureException(response.status, response.statusText);
-            }
+      })
+      .then((response) => {
+        if (response.ok){
+          return response.json();
+        }
+        else {
+          return response.text().then(result => {
+            throw new Exception.SendSecureException(response.status, response.statusText, result);
           })
-    });
+        }
+      })
   }
+
 
   newSafebox(userEmail){
     const suffix = `api/v2/safeboxes/new?user_email=${userEmail}&locale=${this.locale}`;
@@ -70,7 +70,6 @@ export default class JsonClient {
       if (isNode) {
         if ('filePath' in object) {
           if (fs.existsSync(object.filePath)){
-            console.log('A')
             var data = fs.readFileSync(object.filePath);
             var contentType = object.contentType || lookup(object.filePath);
             var filename = object.filename || path.basename(object.filePath);

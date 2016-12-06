@@ -2,6 +2,8 @@ import babel  from 'rollup-plugin-babel';
 import eslint from 'rollup-plugin-eslint';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
+import uglify  from 'rollup-plugin-uglify';
+import { minify } from 'uglify-js';
 
 export default {
   entry: 'src/main.js',
@@ -16,10 +18,10 @@ export default {
     babel({
       exclude: 'node_modules/**'
     }),
-    //eslint(),
+    uglify({}, minify),
   ],
   targets: [
-    { dest: 'build/bundle.cjs.js', format: 'cjs' },
-    { dest: 'build/bundle.iife.js', format: 'iife', moduleName: 'test' }
+    { dest: 'build/sendsecure.cjs.min.js', format: 'cjs' },
+    { dest: 'build/sendsecure.iife.min.js', format: 'iife', moduleName: 'SendSecure' }
   ]
 }

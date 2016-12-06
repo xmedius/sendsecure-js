@@ -1,9 +1,10 @@
-export default class ExtensionFilter {
+import BaseHelper from './BaseHelper.js'
+export default class ExtensionFilter extends BaseHelper {
   constructor(object) {
-    if (object){
-      this.mode = object.mode;
-      this.list = object.list;
-    }
-
+    super();
+    var propertyOrNull = (s) => (object && s in object) ? object[s] : null;
+    this.mode = propertyOrNull('mode');
+    this.list = propertyOrNull('list');
+    Object.seal(this);
   }
 }

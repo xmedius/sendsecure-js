@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <input type="file" id="input">
+    <script  src="../../build/sendsecure.iife.min.js"></script>
+    <script type="text/javascript">
+      SendSecure.Client.getUserToken('acme', '<username>', '<password>', 'deviceid', 'deviceName', 'theApplicationType', 'https://portal.integration.xmedius.com')
+        .then( token => console.log(token))
+        .catch(e => { throw error; })
+    </script>
+  </body>
+</html>
