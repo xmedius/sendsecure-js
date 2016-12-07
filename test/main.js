@@ -1,13 +1,8 @@
-import * as JsonClient from '../src/JsonClient.js'
-// 
-// describe("A Calculator", function() {
-//
-//   it("should be able to add two numbers", function() {
-//     expect(calculator.add(1, 2)).toEqual(3);
-//   });
-//
-//   it("should be able to subtract two numbers", function() {
-//     expect(calculator.subtract(3, 2)).toEqual(1);
-//   });
-//
-// });
+import SendSecure from '../src/sendsecure.js'
+
+describe("A suite", function() {
+  it("contains spec with an expectation", function() {
+    var jsonclient = new SendSecure.JsonClient("apiToken", 'enterpriseAccount', 'https://portal.integration.xmedius.com', 'en')
+    expect(jsonclient.endpoint).toBe('https://portal.integration.xmedius.com');
+  });
+});

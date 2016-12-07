@@ -6,7 +6,7 @@ import uglify  from 'rollup-plugin-uglify';
 import { minify } from 'uglify-js';
 
 export default {
-  entry: 'src/main.js',
+  entry: 'src/sendsecure.js',
   sourceMap: 'inline',
   plugins: [
     resolve ({

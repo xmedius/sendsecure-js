@@ -90,7 +90,6 @@ export default class Client {
   submitSafebox(safebox){
     return this.initializeSafebox(safebox)
       .then(sbx => {
-        var result = [];
         let requests = _map(sbx.attachments, (item) => {
           return this.uploadAttachment(sbx, item)
         });
