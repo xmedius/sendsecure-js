@@ -8,9 +8,9 @@
     <input type="file" id="input">
     <script  src="../../build/sendsecure.iife.min.js"></script>
     <script type="text/javascript">
-      SendSecure.Client.getUserToken('acme', '<username>', '<password>', 'deviceid', 'deviceName', 'theApplicationType', 'https://portal.integration.xmedius.com')
-        .then( token => console.log(token))
-        .catch(e => { throw error; })
+      SendSecure.Client.getUserToken("deathstar", "darthvader", "d@Rk$1De", "DV-TIE/x1", "TIE Advanced x1", "The Force App")
+        .then(function(userToken) { console.log(userToken); })
+        .catch(function(error) { console.error(error); });
     </script>
   </body>
 </html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <input type="file" id="input">
+    <script  src="../../build/sendsecure.iife.min.js"></script>
+    <script type="text/javascript">
+      var inputElement = document.getElementById("input");
+      inputElement.addEventListener("change", function(){
+        var file = this.files[0]; /* now you can work with the file list */
+        var userEmail = 'darthvader@empire.com',
+              token = 'USER|1d495165-4953-4457-8b5b-4fcf801e621a',
+              enterpriseAccount = 'deathstar',
+              endpoint = 'https://portal.xmedius.com';
+
+        var safebox = new SendSecure.Helpers.Safebox(userEmail);
+        safebox.subject = 'Family matters';
+        safebox.message = 'Son, you will find attached the evidence.';
+
+        var recipient = new SendSecure.Helpers.Recipient( { email: 'lukeskywalker@rebels.com' } );
+        var contactMethod = new SendSecure.Helpers.ContactMethod();
+        contactMethod.destinationType = 'cell_phone'
+        contactMethod.destination =  '+15145550000'
+        recipient.contactMethods.push(contactMethod);
+        safebox.recipients.push(recipient);
+
+        safebox.attachments.push( new SendSecure.Helpers.Attachment(file));
+        var client = new  SendSecure.Client(token, enterpriseAccount, endpoint);
+        client.submitSafebox(safebox)
+          .then( function(safeboxResponse) { console.log(safeboxResponse); })
+          .catch(function(safeboxResponse) { console.error(error); } );
+      })
+    </script>
+  </body>
+</html>

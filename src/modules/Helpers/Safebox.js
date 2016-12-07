@@ -1,15 +1,17 @@
 import _reduce from 'lodash/reduce';
+import _isArray from 'lodash/isArray';
+import _extend from 'lodash/extend';
 import _map from 'lodash/map';
 import BaseHelper from './BaseHelper.js';
+import * as Exception from '../sendSecureException.js';
 
+let map =  new WeakMap();
 export default class Safebox extends BaseHelper {
   constructor (userEmail){
     super();
     _map( [
       'guid',
-      'recipients',
       'subject',
-      'attachments',
       'securityProfile',
       'message',
       'replyEnabled',
@@ -18,9 +20,37 @@ export default class Safebox extends BaseHelper {
       'notificationLanguage',
     ], (v) => this[v] = null);
     this.userEmail = userEmail;
+    map.set(this, { recipients: [], attachments: [] });
     Object.preventExtensions(this);
   }
+  
+  set recipients(value) {
+    if (!_isArray(value)){
+      throw new Exception.SendSecureException('0', 'recipients must be an Array of Recipient\s');
+    }
+    map.get(this).recipients = value;
+  }
 
+  get recipients() {
+    return map.get(this).recipients;
+  }
+
+  set attachments(value) {
+    if (!_isArray(value)){
+      throw new Exception.SendSecureException('0', 'attachments must be an Array of Attachment\'s');
+    }
+    map.get(this).attachments = value;
+  }
+
+  get attachments() {
+    return map.get(this).attachments;
+  }
+
+
+  underscorifyKeys(){
+    let value = super.underscorifyKeys();
+    return _extend(value, {recipients: _map(this.recipients, (item) => item.underscorifyKeys())});
+  }
 
   toJson(){
     let profile = this.securityProfile;
