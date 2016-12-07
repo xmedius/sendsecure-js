@@ -1,17 +1,17 @@
-import _find from 'lodash/find'
-import _map from 'lodash/map'
-import JsonClient from './JsonClient.js'
-import Helpers from './Helpers/Helpers.js'
-import { fetch, FormData, isNode } from './Utils/platform.js'
-import * as Exception from './sendSecureException.js'
+import _find from 'lodash/find';
+import _map from 'lodash/map';
+import JsonClient from './JsonClient.js';
+import Helpers from './Helpers/Helpers.js';
+import { fetch, FormData, isNode } from './Utils/platform.js';
+import * as Exception from './sendSecureException.js';
 
 export default class Client {
-  constructor(apiToken, enterpriseAccount, endpoint = "https://portal.xmedius.com", locale = "en"){
+  constructor(apiToken, enterpriseAccount, endpoint = 'https://portal.xmedius.com', locale = 'en'){
     this.apiToken = apiToken;
     this.enterpriseAccount = enterpriseAccount;
     this.endpoint = endpoint;
     this.locale = locale;
-    this.jsonClient = new JsonClient(apiToken, enterpriseAccount, endpoint, locale)
+    this.jsonClient = new JsonClient(apiToken, enterpriseAccount, endpoint, locale);
   }
 
   /**
@@ -36,12 +36,12 @@ export default class Client {
 	 * @return A Promise that is resolved with the API Token to be used for the specified user
    *         or that is rejected  with an instance of SendSecureException
 	 */
-  static getUserToken(enterpriseAccount, username, password, deviceId, deviceName, applicationType = "sendsecure-js", endpoint, oneTimePassword){
-    const url  = `${endpoint}/services/${enterpriseAccount}/portal/host`
+  static getUserToken(enterpriseAccount, username, password, deviceId, deviceName, applicationType = 'sendsecure-js', endpoint, oneTimePassword){
+    const url  = `${endpoint}/services/${enterpriseAccount}/portal/host`;
     return fetch(url, {	method: 'get' })
     .then(response => {
       if(response.ok) {
-        let text = response.text()
+        let text = response.text();
         if (text === ''){
           throw new Exception.UnexpectedServerResponseException(1, 'unexpected server response format');
         }
@@ -77,40 +77,40 @@ export default class Client {
         } else {
           throw  new Exception.SendSecureException(json.code, json.message);
         }
-      })
+      });
     })
     .catch( function(err) {
       if (err instanceof Exception.SendSecureException) {
         throw err;
       }
       throw  new Exception.SendSecureException(err.code, err.message);
-    })
+    });
   }
 
   submitSafebox(safebox){
     return this.initializeSafebox(safebox)
       .then(sbx => {
         let requests = _map(sbx.attachments, (item) => {
-          return this.uploadAttachment(sbx, item)
+          return this.uploadAttachment(sbx, item);
         });
         return Promise.all(requests).then(attachments => {
           sbx.attachments = attachments;
           return sbx;
-        })
+        });
       })
       .then(sbx => {
         if (!sbx.securityProfile){
           return this.defaultSecurityProfile(sbx.userEmail)
             .then( defaultSecurityProfile => {
-              sbx.securityProfile = defaultSecurityProfile
-              return this.commitSafebox(sbx)
-            })
+              sbx.securityProfile = defaultSecurityProfile;
+              return this.commitSafebox(sbx);
+            });
         }
         else {
-          return this.commitSafebox(sbx)
+          return this.commitSafebox(sbx);
         }
       })
-      .catch (error => { throw error });
+      .catch (error => { throw error; });
   }
 
   initializeSafebox(safebox){
@@ -121,7 +121,7 @@ export default class Client {
         safebox.uploadUrl = result.upload_url;
         return safebox;
       })
-      .catch( error => { throw error })
+      .catch( error => { throw error; });
   }
 
   defaultSecurityProfile(userEmail){
@@ -129,10 +129,10 @@ export default class Client {
       .then( securityProfiles =>
         this.enterpriseSettings(userEmail)
           .then(enterpriseSettings => {
-            return _find(securityProfiles, profile =>   profile.id == enterpriseSettings.defaultSecurityProfileId )
+            return _find(securityProfiles, profile =>   profile.id == enterpriseSettings.defaultSecurityProfileId );
           })
       )
-      .catch ( error => { throw error });
+      .catch ( error => { throw error; });
   }
 
   uploadAttachment(safebox, attachment){
@@ -140,15 +140,15 @@ export default class Client {
       return this.jsonClient.uploadFile(safebox.uploadUrl,
           {fileStream: attachment.stream, contentType: attachment.contentType, filename: attachment.filename })
         .then(result => {
-          attachment.guid = result.temporary_document.document_guid
+          attachment.guid = result.temporary_document.document_guid;
           return attachment;
-        })
+        });
     } else {
       return this.jsonClient.uploadFile(safebox.uploadUrl, {file: attachment.file } )
         .then(result => {
-          attachment.guid = result.temporary_document.document_guid
+          attachment.guid = result.temporary_document.document_guid;
           return attachment;
-        })
+        });
     }
 
   }
@@ -156,14 +156,14 @@ export default class Client {
   commitSafebox(safebox){
     return this.jsonClient.commitSafebox(safebox.toJson())
       .then(result => new Helpers.SafeboxResponse(result))
-      .catch (error => {throw error})
+      .catch (error => {throw error;});
   }
 
   securityProfiles(userEmail){
     return this.jsonClient.securityProfiles(userEmail)
     .then(result => {
       return result.security_profiles.map((e) => new Helpers.SecurityProfile(e));
-    })
+    });
   }
 
   enterpriseSettings(){

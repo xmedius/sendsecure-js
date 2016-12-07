@@ -1,5 +1,5 @@
-import BaseHelper from './BaseHelper.js'
-import ContactMethod from './ContactMethod.js'
+import BaseHelper from './BaseHelper.js';
+import ContactMethod from './ContactMethod.js';
 
 export default class Recipient extends BaseHelper{
   constructor(object){
@@ -12,8 +12,8 @@ export default class Recipient extends BaseHelper{
     this.contactMethods = null;
     if (object && 'contact_methods' in object){
       this.contactMethods = object.contact_methods.map((contactMethod) => {
-        new ContactMethod(contactMethod)
-      })
+        new ContactMethod(contactMethod);
+      });
     }
     Object.seal(this);
   }

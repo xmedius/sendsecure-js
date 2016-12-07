@@ -1,6 +1,6 @@
-import BaseHelper from './BaseHelper.js'
-
-import { isNode, fs, lookup, path } from '../Utils/platform.js'
+import _all from 'lodash/every';
+import BaseHelper from './BaseHelper.js';
+import { isNode, fs, lookup, path } from '../Utils/platform.js';
 
 export default class Attachment extends BaseHelper {
   /**
@@ -29,8 +29,9 @@ export default class Attachment extends BaseHelper {
         this.filename = path.basename(arg);
         this.contentType = lookup(arg);
         this.stream = fs.readFileSync(arg);
-      } else {
-        if(_all(['filename', 'stream', 'contentType']), e => e in arg){
+      }
+      else {
+        if(_all(['filename', 'stream', 'contentType'], e => e in arg)){
           this.filename = arg.filename;
           this.contentType = arg.contentType;
           this.stream = arg.stream;
@@ -42,7 +43,7 @@ export default class Attachment extends BaseHelper {
     } else {
       this.file = arg;
     }
-    this.guid = null
+    this.guid = null;
     Object.seal(this);
   }
 }

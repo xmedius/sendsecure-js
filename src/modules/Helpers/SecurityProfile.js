@@ -1,6 +1,5 @@
-import BaseHelper from './BaseHelper.js'
-import _map from 'lodash/map'
-import _reduce from 'lodash/reduce'
+import BaseHelper from './BaseHelper.js';
+import _map from 'lodash/map';
 
 export default class SecurityProfile extends BaseHelper {
   constructor(object) {

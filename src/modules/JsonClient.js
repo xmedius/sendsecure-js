@@ -1,7 +1,7 @@
-import { fetch, fs, lookup, isNode, path, FormData } from './Utils/platform.js'
-import _any from 'lodash/some.js'
-import _all from 'lodash/every.js'
-import * as Exception from './sendSecureException.js'
+import { fetch, fs, lookup, isNode, path, FormData } from './Utils/platform.js';
+import _any from 'lodash/some.js';
+import _all from 'lodash/every.js';
+import * as Exception from './sendSecureException.js';
 
 export default class JsonClient {
   constructor(apiToken, enterpriseAccount, endpoint = 'https://portal.xmedius.com', locale = 'en') {
@@ -12,12 +12,12 @@ export default class JsonClient {
   }
 
   _getSendSecureEndpoint(enterpriseAccount, endpoint){
-    const url  = `${endpoint}/services/${enterpriseAccount}/sendsecure/server/url`
+    const url  = `${endpoint}/services/${enterpriseAccount}/sendsecure/server/url`;
     return fetch(url, {
-    	method: 'get'
+      method: 'get'
     }).then((response) => {
       if(response.ok) {
-        let text = response.text()
+        let text = response.text();
         if (text === ''){
           throw new Exception.UnexpectedServerResponseException(1, 'unexpected server response format');
         }
@@ -25,15 +25,15 @@ export default class JsonClient {
       } else {
         throw new Exception.SendSecureException(response.status, response.statusText);
       }
-    })
+    });
   }
 
   _makeRequest( suffixUrl,
                 request = { headers: {  'Authorization-Token': this.apiToken }, method: 'get' }) {
     return this._getSendSecureEndpoint(this.enterpriseAccount, this.endpoint)
       .then((sendsecureEndpoint) => {
-        const url = `${sendsecureEndpoint}${suffixUrl}`
-        return fetch(url, request)
+        const url = `${sendsecureEndpoint}${suffixUrl}`;
+        return fetch(url, request);
       })
       .then((response) => {
         if (response.ok){
@@ -42,30 +42,30 @@ export default class JsonClient {
         else {
           return response.text().then(result => {
             throw new Exception.SendSecureException(response.status, response.statusText, result);
-          })
+          });
         }
-      })
+      });
   }
 
 
   newSafebox(userEmail){
     const suffix = `api/v2/safeboxes/new?user_email=${userEmail}&locale=${this.locale}`;
-    return this._makeRequest(suffix)
+    return this._makeRequest(suffix);
   }
 
   securityProfiles(userEmail) {
     const suffix = `api/v2/enterprises/${this.enterpriseAccount}/security_profiles?user_email=${userEmail}&locale=${this.locale}`;
-    return this._makeRequest(suffix)
+    return this._makeRequest(suffix);
   }
 
-  enterpriseSettings(userEmail) {
+  enterpriseSettings() {
     const suffix = `api/v2/enterprises/${this.enterpriseAccount}/settings?locale=${this.locale}`;
-    return this._makeRequest(suffix)
+    return this._makeRequest(suffix);
   }
 
   uploadFile(uploadUrl, object){
     if (!_any(['file', 'filePath', 'fileStream'], (elt) => elt in object)){
-      throw new Exception.SendSecureException('0', "upload File arguments error");
+      throw new Exception.SendSecureException('0', 'upload File arguments error');
     } else {
       if (isNode) {
         if ('filePath' in object) {
@@ -101,11 +101,11 @@ export default class JsonClient {
       body: data,
     }).then (response => {
       if (response.ok){
-        return response.json()
+        return response.json();
       }  else {
         throw new Exception.SendSecureException(response.status, response.statusText);
       }
-    })
+    });
   }
 
   _uploadFileNode(uploadUrl, fileStream, contentType, filename){
@@ -113,15 +113,15 @@ export default class JsonClient {
     data.append( 'file', fileStream, filename  );
 
     return fetch(uploadUrl, {
-    	method: 'post',
-    	body: data ,
+      method: 'post',
+      body: data ,
     }).then (response => {
       if (response.ok){
-        return response.json()
+        return response.json();
       }  else {
         throw new Exception.SendSecureException(response.status, response.statusText);
       }
-    })
+    });
   }
 
   commitSafebox(safeboxJson){
@@ -133,7 +133,7 @@ export default class JsonClient {
         method: 'post',
         body: safeboxJson,
       }
-    )
+    );
   }
 
 }

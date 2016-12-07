@@ -1,4 +1,4 @@
-import BaseHelper from './BaseHelper.js'
+import BaseHelper from './BaseHelper.js';
 export default class ExtensionFilter extends BaseHelper {
   constructor(object) {
     super();

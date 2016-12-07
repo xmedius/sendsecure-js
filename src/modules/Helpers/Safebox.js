@@ -1,6 +1,6 @@
-import _reduce from 'lodash/reduce'
-import _map from 'lodash/map'
-import BaseHelper from './BaseHelper.js'
+import _reduce from 'lodash/reduce';
+import _map from 'lodash/map';
+import BaseHelper from './BaseHelper.js';
 
 export default class Safebox extends BaseHelper {
   constructor (userEmail){
@@ -30,9 +30,9 @@ export default class Safebox extends BaseHelper {
     let result = this.underscorifyKeys();
     result.security_profile_id = profile.id;
     result.document_ids = _reduce(attachments, (result, att) => {
-      result.push(att.guid)
+      result.push(att.guid);
       return result;
-    }, [])
+    }, []);
     result.group_replies = profile.groupReplies.value;
     result.expiration_value = profile.expirationValue.value;
     result.expiration_unit = profile.expirationUnit.value;
@@ -42,8 +42,8 @@ export default class Safebox extends BaseHelper {
     result.encrypt_message = profile.encryptMessage.value;
     result.double_encryption = profile.doubleEncryption.value;
     result.reply_enabled = profile.replyEnabled.value;
-    result.notification_language = 'en'
-    return JSON.stringify({ safebox: result })
+    result.notification_language = 'en';
+    return JSON.stringify({ safebox: result });
   }
 
 

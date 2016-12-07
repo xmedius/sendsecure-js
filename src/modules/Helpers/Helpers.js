@@ -1,11 +1,11 @@
-import SecurityProfile from './SecurityProfile.js'
-import EnterpriseSettings from './EnterpriseSettings.js'
-import ExtensionFilter from './ExtensionFilter.js'
-import ContactMethod from './ContactMethod.js'
-import Attachment from './Attachment.js'
-import Safebox from './Safebox.js'
-import Recipient from './Recipient.js'
-import SafeboxResponse from './SafeboxResponse.js'
+import SecurityProfile from './SecurityProfile.js';
+import EnterpriseSettings from './EnterpriseSettings.js';
+import ExtensionFilter from './ExtensionFilter.js';
+import ContactMethod from './ContactMethod.js';
+import Attachment from './Attachment.js';
+import Safebox from './Safebox.js';
+import Recipient from './Recipient.js';
+import SafeboxResponse from './SafeboxResponse.js';
 
 var Helpers = {};
 

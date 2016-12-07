@@ -9,6 +9,6 @@ export class SendSecureException extends Error {
 
 export class UnexpectedServerResponseException extends SendSecureException {
   constructor(code, message){
-    super (code, message)
+    super (code, message);
   }
 }

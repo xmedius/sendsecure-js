@@ -14,6 +14,7 @@ export default {
       main: true,
       browser: true,
     }),
+    eslint(),
     commonjs(),
     babel({
       exclude: 'node_modules/**'

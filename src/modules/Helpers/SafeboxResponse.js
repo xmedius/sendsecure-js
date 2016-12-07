@@ -1,4 +1,4 @@
-import BaseHelper from './BaseHelper.js'
+import BaseHelper from './BaseHelper.js';
 
 export default class SafeboxResponse extends BaseHelper {
   constructor(object) {
