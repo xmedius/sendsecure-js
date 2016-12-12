@@ -14,7 +14,7 @@ and
 
 # sendsecure-js
 
-**This library allows you to use the SendSecure Web API via JavaScript.**
+**This library allows you to use the SendSecure Web API via JavaScript (Server or Client).**
 
 With this library, you will be able to:
 * Authenticate SendSecure users
@@ -33,13 +33,28 @@ With this library, you will be able to:
 
 ## Prerequisites
 
-- Any of the most popular Web Browsers, latest version
+sendsecure-js is written following the EcmaScript2015 standard, which may not be fully supported by all the browsers out there.
+However, to get away with this setback we're using [Rollup.js](http://rollupjs.org) and [Babel.js](https://babeljs.io/) for bundling
+and transpiling the code to something runnable for the browser or node.
+
+- Node 6.5+ OR Firefox 49+, Chrome 49+, Edge 14+
 - The SendSecure service, provided by [XMedius](https://www.xmedius.com/en/products?source=sendsecure-js) (demo accounts available on demand)
 
 ## Install Package
 
-```javascript
-TBD
+### Via npm
+
+```
+npm install --save sendsecure-js
+```
+
+### Using Source Code
+
+```
+git clone https://github.com/xmedius/sendsecure-js.git
+cd <path_to_sendsecure-js>/sendsecure-js
+npm install
+./node_modules/.bin/rollup -c
 ```
 
 <a name="quickstart"></a>
@@ -50,57 +65,109 @@ TBD
 Authentication is done using an API Token, which must be first obtained based on SendSecure enterprise account and user credentials.
 Here is the minimum code to get such a user-based API Token.
 
+### Server (Node.js)
+
 ```javascript
-SendSecure.Client.getUserToken('deathstar', 'darthvader', 'd@Rk$1De', 'deviceid', 'deviceName', 'theApplicationType', 'https://portal.integration.xmedius.com')
-  .then( token => console.log(token))
-  .catch(e => { throw error; })
-
-
-SendSecure.Client.getUserToken('deathstar', 'darthvader', 'd@Rk$1De')
-  .then(userToken => {
-                console.log(userToken);
-});
+var SendSecure = require ('../../build/sendsecure.cjs.min.js')
+SendSecure.Client.getUserToken("deathstar", "darthvader", "d@Rk$1De", "DV-TIE/x1", "TIE Advanced x1", "The Force App")
+  .then(function(userToken) { console.log(userToken); })
+  .catch(function(error) { console.error(error); })
 ```
 
-## SafeBox Creation
+### Client (Browser)
+
+```javascript
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <input type="file" id="input">
+    <script  src="../../build/sendsecure.iife.min.js"></script>
+    <script type="text/javascript">
+      SendSecure.Client.getUserToken("deathstar", "darthvader", "d@Rk$1De", "DV-TIE/x1", "TIE Advanced x1", "The Force App")
+        .then(function(userToken) { console.log(userToken); })
+        .catch(function(error) { console.error(error); });
+    </script>
+  </body>
+</html>
+```
+
+## SafeBox Creation (Using SafeBox Helper Class)
 
 Here is the minimum required code to create a SafeBox – with 1 recipient, a subject, a message and 1 attachment.
 This example uses the user's *default* security profile (which requires to be set in the account).
 
-### With SafeBox Helper Class
+### Server (Node.js)
 
 ```javascript
-var inputElement = document.getElementById("input");
-inputElement.addEventListener("change", function(){
-  var file = this.files[0]; /* now you can work with the file list */
+var SendSecure = require ('../build/sendsecure.cjs.min.js')
 
-SendSecure.Client.getUserToken('acme', 'bonjour', 'Qwerty123', 'https://portal.integration.xmedius.com')
-  .then(result => {
-    let safebox = new SendSecure.Helpers.Safebox('mail@mail.com')
-    let recipient = new SendSecure.Helpers.Recipient( {email: 'allan.seymour@xmedius.com', first_name: 'Allan', last_name: 'Seymour'} );
-    let contactMethod = new SendSecure.Helpers.ContactMethod();
-    contactMethod.destinationType = 'cell_phone'
-    contactMethod.destination =  '+15145550000'
-    recipient.contactMethods = [ contactMethod ];
-    //let securityProfile = new SendSecure.Helpers.SecurityProfile
-    safebox.subject = 'Hello World';
-    safebox.message = 'This is an Hello World Message';
-    safebox.recipients = [ recipient ]
-    safebox.attachments = [ new SendSecure.Helpers.Attachment(file)];
-    let client = new  SendSecure.Client(result, 'acme', "https://portal.integration.xmedius.com");
-    return client.submitSafebox(safebox)
-  })
-  .then(e => console.log(e))
-  .catch(e => console.log(e))
-})
+var userEmail = 'darthvader@empire.com',
+      token = 'USER|1d495165-4953-4457-8b5b-4fcf801e621a',
+      enterpriseAccount = 'deathstar',
+      endpoint = 'https://portal.xmedius.com';
+
+var safebox = new SendSecure.Helpers.Safebox(userEmail);
+safebox.subject = 'Family matters';
+safebox.message = 'Son, you will find attached the evidence.';
+
+var recipient = new SendSecure.Helpers.Recipient( { email: 'lukeskywalker@rebels.com' } );
+var contactMethod = new SendSecure.Helpers.ContactMethod();
+contactMethod.destinationType = 'cell_phone'
+contactMethod.destination =  '555-232-5334'
+recipient.contactMethods.push(contactMethod);
+safebox.recipients.push(recipient);
+
+safebox.attachments.push( new SendSecure.Helpers.Attachment("Birth_Certificate.pdf"));
+var client = new  SendSecure.Client(token, enterpriseAccount, endpoint);
+client.submitSafebox(safebox)
+  .then( function(safeboxResponse) { console.log(safeboxResponse); })
+  .catch(function(safeboxResponse) { console.error(error); } );
 ```
 
-<!-- ### Without SafeBox Helper Class
+### Client (Browser)
 
 ```javascript
-TBD
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <input type="file" id="input">
+    <script  src="../../build/sendsecure.iife.min.js"></script>
+    <script type="text/javascript">
+      var inputElement = document.getElementById("input");
+      inputElement.addEventListener("change", function(){
+        var file = this.files[0]; /* now you can work with the file list */
+        var userEmail = 'darthvader@empire.com',
+              token = 'USER|1d495165-4953-4457-8b5b-4fcf801e621a',
+              enterpriseAccount = 'deathstar',
+              endpoint = 'https://portal.xmedius.com';
+        var safebox = new SendSecure.Helpers.Safebox(userEmail);
+        safebox.subject = 'Family matters';
+        safebox.message = 'Son, you will find attached the evidence.';
+        var recipient = new SendSecure.Helpers.Recipient( { email: 'lukeskywalker@rebels.com' } );
+        var contactMethod = new SendSecure.Helpers.ContactMethod();
+        contactMethod.destinationType = 'cell_phone'
+        contactMethod.destination =  '555-232-5334'
+        recipient.contactMethods.push(contactMethod);
+        safebox.recipients.push(recipient);
+        safebox.attachments.push( new SendSecure.Helpers.Attachment(file));
+        var client = new  SendSecure.Client(token, enterpriseAccount, endpoint);
+        client.submitSafebox(safebox)
+          .then( function(safeboxResponse) { console.log(safeboxResponse); })
+          .catch(function(safeboxResponse) { console.error(error); } );
+      })
+    </script>
+  </body>
+</html>
 ```
- -->
+
 <a name="usage"></a>
 # Usage
 
