@@ -54,7 +54,6 @@ npm install --save sendsecure-js
 git clone https://github.com/xmedius/sendsecure-js.git
 cd <path_to_sendsecure-js>/sendsecure-js
 npm install
-./node_modules/.bin/rollup -c
 ```
 
 <a name="quickstart"></a>
@@ -185,7 +184,7 @@ Param             | Type   | Definition
 enterpriseAccount | String | The SendSecure enterprise account
 username          | String | The username of a SendSecure user of the current enterprise account
 password          | String | The password of this user
-deviceId          | String | The unique ID of the device used to get the Token 
+deviceId          | String | The unique ID of the device used to get the Token
 deviceName        | String | The name of the device used to get the Token
 applicationType   | String | The type/name of the application used to get the Token ("sendsecure-js" will be used by default if empty)
 endpoint          | String | The URL to the SendSecure service ("https://portal.xmedius.com" will be used by default if empty)
@@ -259,7 +258,7 @@ This actually "Sends" the SafeBox with all content and contact info previously s
 
 Param      | Type    | Definition
 -----------|---------|-----------
-safebox    | Safebox | A Safebox object already initialized, with security profile, recipient(s), subject and message already defined, and attachments already uploaded. 
+safebox    | Safebox | A Safebox object already initialized, with security profile, recipient(s), subject and message already defined, and attachments already uploaded.
 
 ### Submit SafeBox
 ```
@@ -269,7 +268,7 @@ This method is a high-level combo that initializes the SafeBox, uploads all atta
 
 Param      | Type    | Definition
 -----------|---------|-----------
-safebox    | Safebox | A non-initialized Safebox object with security profile, recipient(s), subject, message and attachments (not yet uploaded) already defined. 
+safebox    | Safebox | A non-initialized Safebox object with security profile, recipient(s), subject, message and attachments (not yet uploaded) already defined.
 
 
 ## Helper Modules

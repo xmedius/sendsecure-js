@@ -23,7 +23,7 @@ export default class Safebox extends BaseHelper {
     map.set(this, { recipients: [], attachments: [] });
     Object.preventExtensions(this);
   }
-  
+
   set recipients(value) {
     if (!_isArray(value)){
       throw new Exception.SendSecureException('0', 'recipients must be an Array of Recipient\s');
@@ -72,7 +72,7 @@ export default class Safebox extends BaseHelper {
     result.encrypt_message = profile.encryptMessage.value;
     result.double_encryption = profile.doubleEncryption.value;
     result.reply_enabled = profile.replyEnabled.value;
-    result.notification_language = 'en';
+    result.notification_language = this.notificationLanguage || 'en';
     return JSON.stringify({ safebox: result });
   }
 

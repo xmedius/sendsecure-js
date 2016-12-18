@@ -6,7 +6,7 @@ import * as Exception from '../sendSecureException.js';
 export default class Attachment extends BaseHelper {
   /**
   * Create a new instance of Attachment
-  * @since 0.1.0
+  * @since 0.0.1
   * @param {String|Object|File} In NodeJS: either the path to a file on disk or an object , in browser a File object (cf. https://developer.mozilla.org/en/docs/Web/API/File).
   * @returns {Attachment} Returns a new instance of Attachment,
   *  else `false`.
@@ -38,7 +38,7 @@ export default class Attachment extends BaseHelper {
           this.stream = arg.stream;
         }
         else {
-          // TODO exception?
+          throw new Exception.SendSecureException(0, 'Missing');
         }
       }
     } else {

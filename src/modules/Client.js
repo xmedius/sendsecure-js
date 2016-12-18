@@ -36,7 +36,7 @@ export default class Client {
 	 * @return A Promise that is resolved with the API Token to be used for the specified user
    *         or that is rejected  with an instance of SendSecureException
 	 */
-  static getUserToken(enterpriseAccount, username, password, deviceId, deviceName, applicationType = 'sendsecure-js', endpoint, oneTimePassword){
+  static getUserToken(enterpriseAccount, username, password, deviceId, deviceName, applicationType = 'SendSecure Js', endpoint = 'https://portal.xmedius.com', oneTimePassword){
     const url  = `${endpoint}/services/${enterpriseAccount}/portal/host`;
     return Utils.fetch(url, {	method: 'get' })
     .then(response => {
@@ -52,34 +52,34 @@ export default class Client {
     })
     .then(portal_url => {
       const url  = `${portal_url}api/user_token`;
-      var data = new Utils.FormData();
+      var data = new Utils.formData();
       data.append( 'permalink', enterpriseAccount  );
       data.append( 'username', username );
       data.append( 'password', password );
       if (oneTimePassword) {
         data.append( 'otp', oneTimePassword );
       }
-      data.append( 'application_type', 'sendsecure-js'  );
+      data.append( 'application_type', applicationType  );
       data.append( 'device_id', deviceId  );
       data.append( 'device_name', deviceName  );
 
-      return Utils.fetch(url, {	method: 'POST',	body: data, })
-      .then(function(response){
-        let json = response.json();
-        if (!json){
-          throw new Exception.SendSecureException(response.status, response.statusText);
-        }
-        return json;
-      })
-      .then(function(json){
-        if (json.result){
-          return json.token;
-        } else {
-          throw  new Exception.SendSecureException(json.code, json.message);
-        }
-      });
+      return Utils.fetch(url, {	method: 'POST',	body: data });
     })
-    .catch( function(err) {
+    .then(response => {
+      let json = response.json();
+      if (!json){
+        throw new Exception.SendSecureException(response.status, response.statusText);
+      }
+      return json;
+    })
+    .then( json => {
+      if (json.result){
+        return json.token;
+      } else {
+        throw  new Exception.SendSecureException(json.code, json.message);
+      }
+    })
+    .catch( err => {
       if (err instanceof Exception.SendSecureException) {
         throw err;
       }
@@ -136,21 +136,19 @@ export default class Client {
   }
 
   uploadAttachment(safebox, attachment){
-    if (Utils.isNode){
-      return this.jsonClient.uploadFile(safebox.uploadUrl,
-          {fileStream: attachment.stream, contentType: attachment.contentType, filename: attachment.filename })
-        .then(result => {
-          attachment.guid = result.temporary_document.document_guid;
-          return attachment;
-        });
-    } else {
-      return this.jsonClient.uploadFile(safebox.uploadUrl, {file: attachment.file } )
-        .then(result => {
-          attachment.guid = result.temporary_document.document_guid;
-          return attachment;
-        });
-    }
-
+    var param = Utils.isNode ?
+      {
+        fileStream: attachment.stream,
+        contentType: attachment.contentType,
+        filename: attachment.filename
+      } : {
+        file: attachment.file
+      }
+    return this.jsonClient.uploadFile(safebox.uploadUrl, param )
+      .then(result => {
+        attachment.guid = result.temporary_document.document_guid;
+        return attachment;
+      });
   }
 
   commitSafebox(safebox){

@@ -6,6 +6,7 @@ import Attachment from './Attachment.js';
 import Safebox from './Safebox.js';
 import Recipient from './Recipient.js';
 import SafeboxResponse from './SafeboxResponse.js';
+import BaseHelper from './BaseHelper.js';
 
 var Helpers = {};
 
@@ -17,5 +18,6 @@ Helpers.Attachment = Attachment;
 Helpers.Recipient = Recipient;
 Helpers.Safebox = Safebox;
 Helpers.SafeboxResponse = SafeboxResponse;
+Helpers.BaseHelper = BaseHelper;
 
 export default Helpers;

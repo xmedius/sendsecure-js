@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8">
     <title></title>
-  </head>
-  <body>
-    <input type="file" id="input">
     <script  src="../../build/sendsecure.iife.min.js"></script>
     <script type="text/javascript">
       SendSecure.Client.getUserToken("deathstar", "darthvader", "d@Rk$1De", "DV-TIE/x1", "TIE Advanced x1", "The Force App")
         .then(function(userToken) { console.log(userToken); })
         .catch(function(error) { console.error(error); });
     </script>
+  </head>
+  <body>
+    <input type="file" id="input">
   </body>
 </html>
