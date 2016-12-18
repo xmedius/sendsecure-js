@@ -4,10 +4,9 @@ export default class SafeboxResponse extends BaseHelper {
   constructor(object) {
 
     super();
-    var propertyOrNull = (s) => (object && s in object) ? object[s] : null;
-    this.previewUrl = propertyOrNull('preview_url');
-    this.encryptionKey = propertyOrNull('encryptionKey');
-    this.guid = propertyOrNull('guid');
+    this.previewUrl = this.propertyOrNull(object, 'preview_url');
+    this.encryptionKey = this.propertyOrNull(object, 'encryptionKey');
+    this.guid = this.propertyOrNull(object, 'guid');
     Object.seal(this);
   }
 }

@@ -20,4 +20,4 @@ safebox.attachments.push( new SendSecure.Helpers.Attachment("Birth_Certificate.p
 var client = new  SendSecure.Client(token, enterpriseAccount, endpoint);
 client.submitSafebox(safebox)
   .then( function(safeboxResponse) { console.log(safeboxResponse); })
-  .catch(function(safeboxResponse) { console.error(error); } );
+  .catch(function(error) { console.error(error); } );

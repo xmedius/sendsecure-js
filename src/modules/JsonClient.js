@@ -35,7 +35,7 @@ export default class JsonClient {
         const url = `${sendsecureEndpoint}${suffixUrl}`;
         return Utils.fetch(url, request);
       })
-      .then((response) => {
+      .then(response => {
         if (response.ok){
           return response.json();
         }

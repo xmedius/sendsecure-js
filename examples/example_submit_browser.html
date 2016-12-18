@@ -3,14 +3,11 @@
   <head>
     <meta charset="utf-8">
     <title></title>
-  </head>
-  <body>
-    <input type="file" id="input">
     <script  src="../../build/sendsecure.iife.min.js"></script>
     <script type="text/javascript">
       var inputElement = document.getElementById("input");
       inputElement.addEventListener("change", function(){
-        var file = this.files[0]; /* now you can work with the file list */
+        var file = this.files[0];
         var userEmail = 'darthvader@empire.com',
               token = 'USER|1d495165-4953-4457-8b5b-4fcf801e621a',
               enterpriseAccount = 'deathstar',
@@ -31,8 +28,11 @@
         var client = new  SendSecure.Client(token, enterpriseAccount, endpoint);
         client.submitSafebox(safebox)
           .then( function(safeboxResponse) { console.log(safeboxResponse); })
-          .catch(function(safeboxResponse) { console.error(error); } );
+          .catch(function(error) { console.error(error); } );
       })
     </script>
+  </head>
+  <body>
+    <input type="file" id="input">
   </body>
 </html>

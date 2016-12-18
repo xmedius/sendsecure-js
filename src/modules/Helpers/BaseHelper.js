@@ -11,4 +11,8 @@ export default class BaseHelper {
     }, {});
     return result;
   }
+
+  propertyOrNull(object, property){
+    return (object && property in object) ? object[property] : null;
+  }
 }

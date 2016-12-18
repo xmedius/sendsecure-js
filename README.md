@@ -54,7 +54,6 @@ npm install --save sendsecure-js
 git clone https://github.com/xmedius/sendsecure-js.git
 cd <path_to_sendsecure-js>/sendsecure-js
 npm install
-./node_modules/.bin/rollup -c
 ```
 
 <a name="quickstart"></a>
@@ -185,7 +184,7 @@ Param             | Definition
 enterpriseAccount | The SendSecure enterprise account
 username          | The username of a SendSecure user of the current enterprise account
 password          | The password of this user
-deviceId          | The unique ID of the device used to get the Token 
+deviceId          | The unique ID of the device used to get the Token
 deviceName        | The name of the device used to get the Token
 applicationType   | The type/name of the application used to get the Token ("sendsecure-js" will be used by default if empty)
 endpoint          | The URL to the SendSecure service ("https://portal.xmedius.com" will be used by default if empty)
@@ -259,7 +258,7 @@ This actually "Sends" the SafeBox with all content and contact info previously s
 
 Param      | Definition
 -----------|-----------
-safebox    | A [Safebox](#safebox) object already initialized, with security profile, recipient(s), subject and message already defined, and attachments already uploaded. 
+safebox    | A [Safebox](#safebox) object already initialized, with security profile, recipient(s), subject and message already defined, and attachments already uploaded.
 
 ### Submit SafeBox
 ```
@@ -269,7 +268,7 @@ This method is a high-level combo that initializes the SafeBox, uploads all atta
 
 Param      | Definition
 -----------|-----------
-safebox    | A non-initialized [Safebox](#safebox) object with security profile, recipient(s), subject, message and attachments (not yet uploaded) already defined. 
+safebox    | A non-initialized [Safebox](#safebox) object with security profile, recipient(s), subject, message and attachments (not yet uploaded) already defined.
 
 
 ## Helper Modules
@@ -358,7 +357,7 @@ file                 | The file object to upload.
 Attribute            | Definition
 ---------------------|-----------
 guid                 | The unique identifier of the attachment (filled by the system once the file is uploaded).
-contentType          | The file Content-type (MIME). 
+contentType          | The file Content-type (MIME).
 stream               | The data to upload.
 filename             | The file name.
 
