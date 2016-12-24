@@ -1,6 +1,7 @@
 import _all from 'lodash/every';
 import BaseHelper from './BaseHelper.js';
-import { isNode, fs, lookup, path } from '../Utils/platform.js';
+import * as Utils from '../Utils/platform.js';
+import * as Exception from '../sendSecureException.js';
 
 export default class Attachment extends BaseHelper {
   /**
@@ -24,11 +25,11 @@ export default class Attachment extends BaseHelper {
   */
   constructor(arg) {
     super();
-    if (isNode){
+    if (Utils.isNode){
       if (typeof arg == 'string'){
-        this.filename = path.basename(arg);
-        this.contentType = lookup(arg);
-        this.stream = fs.readFileSync(arg);
+        this.filename = Utils.path.basename(arg);
+        this.contentType = Utils.lookup(arg);
+        this.stream = Utils.fs.readFileSync(arg);
       }
       else {
         if(_all(['filename', 'stream', 'contentType'], e => e in arg)){

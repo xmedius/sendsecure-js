@@ -2,7 +2,7 @@ import _find from 'lodash/find';
 import _map from 'lodash/map';
 import JsonClient from './JsonClient.js';
 import Helpers from './Helpers/Helpers.js';
-import { fetch, FormData, isNode } from './Utils/platform.js';
+import * as Utils from './Utils/platform.js';
 import * as Exception from './sendSecureException.js';
 
 export default class Client {
@@ -38,7 +38,7 @@ export default class Client {
 	 */
   static getUserToken(enterpriseAccount, username, password, deviceId, deviceName, applicationType = 'sendsecure-js', endpoint, oneTimePassword){
     const url  = `${endpoint}/services/${enterpriseAccount}/portal/host`;
-    return fetch(url, {	method: 'get' })
+    return Utils.fetch(url, {	method: 'get' })
     .then(response => {
       if(response.ok) {
         let text = response.text();
@@ -52,7 +52,7 @@ export default class Client {
     })
     .then(portal_url => {
       const url  = `${portal_url}api/user_token`;
-      var data = new FormData();
+      var data = new Utils.FormData();
       data.append( 'permalink', enterpriseAccount  );
       data.append( 'username', username );
       data.append( 'password', password );
@@ -63,7 +63,7 @@ export default class Client {
       data.append( 'device_id', deviceId  );
       data.append( 'device_name', deviceName  );
 
-      return fetch(url, {	method: 'POST',	body: data, })
+      return Utils.fetch(url, {	method: 'POST',	body: data, })
       .then(function(response){
         let json = response.json();
         if (!json){
@@ -136,7 +136,7 @@ export default class Client {
   }
 
   uploadAttachment(safebox, attachment){
-    if (isNode){
+    if (Utils.isNode){
       return this.jsonClient.uploadFile(safebox.uploadUrl,
           {fileStream: attachment.stream, contentType: attachment.contentType, filename: attachment.filename })
         .then(result => {
