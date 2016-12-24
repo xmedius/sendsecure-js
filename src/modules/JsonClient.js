@@ -1,4 +1,4 @@
-import { fetch, fs, lookup, isNode, path, FormData } from './Utils/platform.js';
+import * as Utils from './Utils/platform.js';
 import _any from 'lodash/some.js';
 import _all from 'lodash/every.js';
 import * as Exception from './sendSecureException.js';
@@ -13,7 +13,7 @@ export default class JsonClient {
 
   _getSendSecureEndpoint(enterpriseAccount, endpoint){
     const url  = `${endpoint}/services/${enterpriseAccount}/sendsecure/server/url`;
-    return fetch(url, {
+    return Utils.fetch(url, {
       method: 'get'
     }).then((response) => {
       if(response.ok) {
@@ -33,7 +33,7 @@ export default class JsonClient {
     return this._getSendSecureEndpoint(this.enterpriseAccount, this.endpoint)
       .then((sendsecureEndpoint) => {
         const url = `${sendsecureEndpoint}${suffixUrl}`;
-        return fetch(url, request);
+        return Utils.fetch(url, request);
       })
       .then((response) => {
         if (response.ok){
@@ -67,12 +67,12 @@ export default class JsonClient {
     if (!_any(['file', 'filePath', 'fileStream'], (elt) => elt in object)){
       throw new Exception.SendSecureException('0', 'upload File arguments error');
     } else {
-      if (isNode) {
+      if (Utils.isNode) {
         if ('filePath' in object) {
-          if (fs.existsSync(object.filePath)){
-            var data = fs.readFileSync(object.filePath);
-            var contentType = object.contentType || lookup(object.filePath);
-            var filename = object.filename || path.basename(object.filePath);
+          if (Utils.fs.existsSync(object.filePath)){
+            var data = Utils.fs.readFileSync(object.filePath);
+            var contentType = object.contentType || Utils.lookup(object.filePath);
+            var filename = object.filename || Utils.path.basename(object.filePath);
             return this._uploadFileNode(uploadUrl, data, contentType, filename);
           } else {
             throw new Exception.SendSecureException('0', `${object.filePath} does not exist`);
@@ -93,10 +93,10 @@ export default class JsonClient {
   }
 
   _uploadFileBrowser(uploadUrl, file) {
-    var data = new FormData();
+    var data = new Utils.formData();
     data.append( 'file', file, file.name  );
 
-    return fetch(uploadUrl, {
+    return Utils.fetch(uploadUrl, {
       method: 'post',
       body: data,
     }).then (response => {
@@ -109,10 +109,10 @@ export default class JsonClient {
   }
 
   _uploadFileNode(uploadUrl, fileStream, contentType, filename){
-    var data = new FormData();
+    var data = new Utils.formData();
     data.append( 'file', fileStream, filename  );
 
-    return fetch(uploadUrl, {
+    return Utils.fetch(uploadUrl, {
       method: 'post',
       body: data ,
     }).then (response => {
