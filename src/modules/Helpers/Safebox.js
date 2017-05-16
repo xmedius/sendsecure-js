@@ -73,6 +73,7 @@ export default class Safebox extends BaseHelper {
     result.double_encryption = profile.doubleEncryption.value;
     result.reply_enabled = profile.replyEnabled.value;
     result.notification_language = this.notificationLanguage || 'en';
+    result.user_email = this.userEmail;
     return JSON.stringify({ safebox: result });
   }
 
