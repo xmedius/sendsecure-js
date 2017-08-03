@@ -6,12 +6,12 @@ import * as Utils from './Utils/platform.js';
 import * as Exception from './sendSecureException.js';
 
 export default class Client {
-  constructor(apiToken, enterpriseAccount, endpoint = 'https://portal.xmedius.com', locale = 'en'){
+  constructor(apiToken, enterpriseAccount, endpoint = 'https://portal.xmedius.com', locale = 'en', noCaching = false){
     this.apiToken = apiToken;
     this.enterpriseAccount = enterpriseAccount;
     this.endpoint = endpoint;
     this.locale = locale;
-    this.jsonClient = new JsonClient(apiToken, enterpriseAccount, endpoint, locale);
+    this.jsonClient = new JsonClient(apiToken, enterpriseAccount, endpoint, locale, noCaching);
   }
 
   /**
