@@ -4,11 +4,12 @@ import _all from 'lodash/every.js';
 import * as Exception from './sendSecureException.js';
 
 export default class JsonClient {
-  constructor(apiToken, enterpriseAccount, endpoint = 'https://portal.xmedius.com', locale = 'en') {
+  constructor(apiToken, enterpriseAccount, endpoint = 'https://portal.xmedius.com', locale = 'en', noCaching = false) {
     this.apiToken = apiToken;
     this.endpoint = endpoint;
     this.locale = locale;
     this.enterpriseAccount = enterpriseAccount;
+    this.noCaching = noCaching;
   }
 
   _getSendSecureEndpoint(enterpriseAccount, endpoint){
@@ -32,7 +33,10 @@ export default class JsonClient {
                 request = { headers: {  'Authorization-Token': this.apiToken }, method: 'get' }) {
     return this._getSendSecureEndpoint(this.enterpriseAccount, this.endpoint)
       .then((sendsecureEndpoint) => {
-        const url = `${sendsecureEndpoint}${suffixUrl}`;
+        var url = `${sendsecureEndpoint}${suffixUrl}`;
+        if (this.noCaching) {
+          url += (suffixUrl.indexOf('?') >= 0 ? '&rand=' : '?rand=') + new Date().getTime();
+        }
         return Utils.fetch(url, request);
       })
       .then(response => {
