@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8">
     <title></title>
-    <script  src="../../build/sendsecure.iife.min.js"></script>
+    <script  src="../build/sendsecure.iife.min.js"></script>
     <script type="text/javascript">
-      SendSecure.Client.getUserToken("deathstar", "darthvader", "d@Rk$1De", "DV-TIE/x1", "TIE Advanced x1", "The Force App")
-        .then(function(userToken) { console.log(userToken); })
-        .catch(function(error) { console.error(error); });
+      SendSecure.Client.getUserToken("enterpriseAccount", "username", "password", "deviceId", "deviceName", "SendSecure Js", "endpoint")
+        .then(console.log)
+        .catch(console.error);
     </script>
   </head>
   <body>

@@ -1,1 +1,1 @@
-test/*.js --reporter spec --recursive --compilers js:babel-register
+test/**/*.js --reporter spec --recursive --compilers js:babel-register

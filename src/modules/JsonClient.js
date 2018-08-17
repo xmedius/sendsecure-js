@@ -1,29 +1,70 @@
 import * as Utils from './Utils/platform.js';
-import _any from 'lodash/some.js';
-import _all from 'lodash/every.js';
 import * as Exception from './sendSecureException.js';
+import * as CreateSafeboxes from './Json_methods/CreateSafeboxes.js';
+import * as UserMethods from './Json_methods/UserMethods.js';
+import * as EnterpriseMethods from './Json_methods/EnterpriseMethods.js';
+import * as SafeboxOperations from './Json_methods/SafeboxOperations.js';
+import * as ShowSafeboxes from './Json_methods/ShowSafeboxes.js';
+import * as Recipients from './Json_methods/Recipients.js';
+import * as ConsentGroup from './Json_methods/ConsentGroup.js';
 
 export default class JsonClient {
-  constructor(apiToken, enterpriseAccount, endpoint = 'https://portal.xmedius.com', locale = 'en', noCaching = false) {
+
+  constructor(userId, apiToken, enterpriseAccount, endpoint = 'https://portal.xmedius.com', locale = 'en', noCaching = false) {
     this.apiToken = apiToken;
+    this.userId = userId;
     this.endpoint = endpoint;
     this.locale = locale;
     this.enterpriseAccount = enterpriseAccount;
     this.noCaching = noCaching;
+    this.newSafebox = CreateSafeboxes.newSafebox;
+    this.commitSafebox = CreateSafeboxes.commitSafebox;
+    this.uploadFile = CreateSafeboxes.uploadFile;
+    this.newFile = CreateSafeboxes.newFile;
+    this.userSettings = UserMethods.userSettings;
+    this.favorites = UserMethods.favorites;
+    this.createFavorite = UserMethods.createFavorite;
+    this.editFavorite = UserMethods.editFavorite;
+    this.deleteFavorite = UserMethods.deleteFavorite;
+    this.getConsentGroupMessages = ConsentGroup.getConsentGroupMessages;
+    this.securityProfiles = EnterpriseMethods.securityProfiles;
+    this.enterpriseSettings = EnterpriseMethods.enterpriseSettings;
+    this.addTime = SafeboxOperations.addTime;
+    this.closeSafebox = SafeboxOperations.closeSafebox;
+    this.deleteSafeboxContent = SafeboxOperations.deleteSafeboxContent;
+    this.markAsRead = SafeboxOperations.markAsRead;
+    this.markAsUnread = SafeboxOperations.markAsUnread;
+    this.markAsReadMessage = SafeboxOperations.markAsReadMessage;
+    this.markAsUnreadMessage = SafeboxOperations.markAsUnreadMessage;
+    this.getFileUrl = SafeboxOperations.getFileUrl;
+    this.getAuditRecordPdf = SafeboxOperations.getAuditRecordPdf;
+    this.getAuditRecordPdfUrl = SafeboxOperations.getAuditRecordPdfUrl;
+    this.createParticipant = SafeboxOperations.createParticipant;
+    this.updateParticipant = SafeboxOperations.updateParticipant;
+    this.reply = SafeboxOperations.reply;
+    this.getSafeboxMessages = ShowSafeboxes.getSafeboxMessages;
+    this.getSafeboxParticipants = ShowSafeboxes.getSafeboxParticipants;
+    this.getSafeboxSecurityOptions = ShowSafeboxes.getSafeboxSecurityOptions;
+    this.getSafeboxDownloadActivity = ShowSafeboxes.getSafeboxDownloadActivity;
+    this.getSafeboxEventHistory = ShowSafeboxes.getSafeboxEventHistory;
+    this.getSafeboxList = ShowSafeboxes.getSafeboxList;
+    this.getSafeboxInfo = ShowSafeboxes.getSafeboxInfo;
+    this.searchRecipient = Recipients.searchRecipient;
   }
 
-  _getSendSecureEndpoint(enterpriseAccount, endpoint){
+  _getSendSecureEndpoint(enterpriseAccount, endpoint) {
     const url  = `${endpoint}/services/${enterpriseAccount}/sendsecure/server/url`;
     return Utils.fetch(url, {
       method: 'get'
     }).then((response) => {
       if(response.ok) {
         let text = response.text();
-        if (text === ''){
+        if (text === '') {
           throw new Exception.UnexpectedServerResponseException(1, 'unexpected server response format');
         }
         return text;
-      } else {
+      }
+      else {
         throw new Exception.SendSecureException(response.status, response.statusText);
       }
     });
@@ -34,13 +75,17 @@ export default class JsonClient {
     return this._getSendSecureEndpoint(this.enterpriseAccount, this.endpoint)
       .then((sendsecureEndpoint) => {
         var url = `${sendsecureEndpoint}${suffixUrl}`;
-        if (this.noCaching) {
+        if(this.noCaching) {
           url += (suffixUrl.indexOf('?') >= 0 ? '&rand=' : '?rand=') + new Date().getTime();
         }
         return Utils.fetch(url, request);
       })
       .then(response => {
-        if (response.ok){
+        //Handle responses with no content
+        if(response.status === 204) {
+          return {};
+        }
+        if(response.ok) {
           return response.json();
         }
         else {
@@ -49,51 +94,6 @@ export default class JsonClient {
           });
         }
       });
-  }
-
-
-  newSafebox(userEmail){
-    const suffix = `api/v2/safeboxes/new?user_email=${userEmail}&locale=${this.locale}`;
-    return this._makeRequest(suffix);
-  }
-
-  securityProfiles(userEmail) {
-    const suffix = `api/v2/enterprises/${this.enterpriseAccount}/security_profiles?user_email=${userEmail}&locale=${this.locale}`;
-    return this._makeRequest(suffix);
-  }
-
-  enterpriseSettings() {
-    const suffix = `api/v2/enterprises/${this.enterpriseAccount}/settings?locale=${this.locale}`;
-    return this._makeRequest(suffix);
-  }
-
-  uploadFile(uploadUrl, object){
-    if (!_any(['file', 'filePath', 'fileStream'], (elt) => elt in object)){
-      throw new Exception.SendSecureException('0', 'upload File arguments error');
-    } else {
-      if (Utils.isNode) {
-        if ('filePath' in object) {
-          if (Utils.fs.existsSync(object.filePath)){
-            var data = Utils.fs.readFileSync(object.filePath);
-            var contentType = object.contentType || Utils.lookup(object.filePath);
-            var filename = object.filename || Utils.path.basename(object.filePath);
-            return this._uploadFileNode(uploadUrl, data, contentType, filename);
-          } else {
-            throw new Exception.SendSecureException('0', `${object.filePath} does not exist`);
-          }
-        } else {
-          if (_all(['fileStream', 'contentType', 'filename'], (elt) => elt in object)){
-            return this._uploadFileNode(uploadUrl, object.fileStream, object.contentType, object.filename);
-          }
-        }
-      } else {
-        if ('file' in object && object.file instanceof File){
-          return this._uploadFileBrowser(uploadUrl, object.file);
-        } else {
-          throw new Exception.SendSecureException('0', '"file" argument should be an instance of File');
-        }
-      }
-    }
   }
 
   _uploadFileBrowser(uploadUrl, file) {
@@ -106,13 +106,14 @@ export default class JsonClient {
     }).then (response => {
       if (response.ok){
         return response.json();
-      }  else {
+      }
+      else {
         throw new Exception.SendSecureException(response.status, response.statusText);
       }
     });
   }
 
-  _uploadFileNode(uploadUrl, fileStream, contentType, filename){
+  _uploadFileNode(uploadUrl, fileStream, contentType, filename) {
     var data = new Utils.formData();
     data.append( 'file', fileStream, filename  );
 
@@ -120,24 +121,13 @@ export default class JsonClient {
       method: 'post',
       body: data ,
     }).then (response => {
-      if (response.ok){
+      if(response.ok) {
         return response.json();
-      }  else {
+      }
+      else {
         throw new Exception.SendSecureException(response.status, response.statusText);
       }
     });
-  }
-
-  commitSafebox(safeboxJson){
-    const suffix = `api/v2/safeboxes?locale=${this.locale}`;
-    return this._makeRequest(
-      suffix,
-      {
-        headers: {'Authorization-Token': this.apiToken, 'Content-Type': 'application/json'},
-        method: 'post',
-        body: safeboxJson,
-      }
-    );
   }
 
 }
