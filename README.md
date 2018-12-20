@@ -37,12 +37,20 @@ With this library, you will be able to:
 
 sendsecure-js is written following the EcmaScript2015 standard, which may not be fully supported by all the browsers out there.
 However, to get away with this setback we're using [Rollup.js](http://rollupjs.org) and [Babel.js](https://babeljs.io/) for bundling
-and transpiling the code to something runnable for the browser or node.
+and transpiling the code to something runnable for NodeJs.
 
 - Node 6.5+ OR Firefox 49+, Chrome 49+, Edge 14+
-- The SendSecure service, provided by [XMedius](https://www.xmedius.com/en/products?source=sendsecure-js) (demo accounts available on demand)
+- The SendSecure service, provided by [XMedius](https://www.xmedius.com?source=sendsecure-js) (demo accounts available on demand)
 
 ## Install Package
+
+### Via npm
+
+```
+npm install --save sendsecure-js
+```
+
+### Using Source Code
 
 ```
 git clone https://github.com/xmedius/sendsecure-js.git
@@ -57,8 +65,6 @@ npm install
 Authentication is done using an API Token, which must be first obtained based on SendSecure enterprise account and user credentials.
 Here is the minimum code to get such a user-based API Token (and the user ID).
 
-### Server (Node.js)
-
 ```javascript
 var SendSecure = require ('{YOUR_PATH}/sendsecure-js/build/sendsecure.cjs.min.js')
 SendSecure.Client.getUserToken("deathstar", "darthvader", "d@Rk$1De", "DV-TIE/x1", "TIE Advanced x1", "The Force App")
@@ -66,33 +72,10 @@ SendSecure.Client.getUserToken("deathstar", "darthvader", "d@Rk$1De", "DV-TIE/x1
   .catch(console.error);
 ```
 
-### Client (Browser)
-
-```javascript
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-  </head>
-  <body>
-    <input type="file" id="input">
-    <script src="{YOUR_PATH}/sendsecure-js/build/sendsecure.iife.min.js"></script>
-    <script type="text/javascript">
-      SendSecure.Client.getUserToken("deathstar", "darthvader", "d@Rk$1De", "DV-TIE/x1", "TIE Advanced x1", "The Force App")
-        .then(console.log)
-        .catch(console.error);
-    </script>
-  </body>
-</html>
-```
-
 ## SafeBox Creation (Using SafeBox Helper Class)
 
 Here is the minimum required code to create a SafeBox – with 1 recipient, a subject, a message and 1 attachment.
 This example uses the user's *default* security profile (which requires to be set in the account).
-
-### Server (Node.js)
 
 ```javascript
 var SendSecure = require ('{YOUR_PATH}/sendsecure-js/build/sendsecure.cjs.min.js')
@@ -117,46 +100,6 @@ var client = new  SendSecure.Client(userId, token, enterpriseAccount, endpoint);
 client.submitSafebox(safebox)
   .then(console.log)
   .catch(console.error);
-```
-
-### Client (Browser)
-
-```javascript
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title></title>
-    <script src="{YOUR_PATH}/sendsecure-js/build/sendsecure.iife.min.js"></script>
-  </head>
-  <body>
-    <input type="file" id="input">
-    <script type="text/javascript">
-      var inputElement = document.getElementById("input");
-      inputElement.addEventListener("change", function(){
-        var file = this.files[0]; /* now you can work with the file list */
-        var userEmail = 'darthvader@empire.com',
-              token = 'USER|1d495165-4953-4457-8b5b-4fcf801e621a',
-              userId = '123456',
-              enterpriseAccount = 'deathstar',
-              endpoint = 'https://portal.xmedius.com';
-        var safebox = new SendSecure.Helpers.Safebox({ userEmail: userEmail,
-                                                       subject: 'Family matters',
-                                                       message: 'Son, you will find attached the evidence.'});
-
-        var recipient = new SendSecure.Helpers.Participant( { email: 'lukeskywalker@rebels.com' } );
-        var contactMethod = new SendSecure.Helpers.ContactMethod({ destinationType: "cell_phone", destination: "+15145550000" });
-        recipient.guestOptions.addContactMethod(contactMethod);
-        safebox.participants.push(recipient);
-        safebox.attachments.push(new SendSecure.Helpers.Attachment(file));
-        var client = new SendSecure.Client(userId, token, enterpriseAccount, endpoint);
-        client.submitSafebox(safebox)
-          .then(console.log)
-          .catch(console.error);
-      })
-    </script>
-  </body>
-</html>
 ```
 
 # Usage
@@ -595,7 +538,7 @@ Here is the alphabetical list of all available objects, with their attributes.
 
 ### Attachment
 Builds an object to be uploaded to the server as attachment of the SafeBox.
-Subset of [Safebox](#Safebox) object.
+Subset of [Safebox](#safebox) object.
 Can be created either with a [File Path](#file-path), a [File](#file) or a [Stream](#stream).
 All attributes are mandatory.
 
@@ -642,11 +585,11 @@ id                   | The unique ID of the consent message group.
 name                 | The name of the consent message group.
 createdAt            | The creation date of the consent message group.
 updatedAt            | The last modification date of the consent message group.
-consentMessages      | The list of [ConsentMessage](#consentMessage) objects (one per available locale).
+consentMessages      | The list of [ConsentMessage](#consentmessage) objects (one per available locale).
 
 ### ContactMethod
 Builds an object to create a phone number destination owned by a participant or a favorite (or retrieve the contact method information).
-May be a subset of [GuestOptions](#GuestOptions) or [Favorite](#Favorite).
+May be a subset of [GuestOptions](#guestoptions) or [Favorite](#favorite).
 Any ContactMethod – plus the email address – will be usable as Security Code delivery means to the participant.
 
 Attribute            | Definition
@@ -660,27 +603,27 @@ updatedAt            | (read only) The last modification date of the contact met
 
 ### DownloadActivity
 Builds an object with all download activity information of all participants of an existing SafeBox.
-Subset of [Safebox](#Safebox) object.
+Subset of [Safebox](#safebox) object.
 All attributes are read only.
 
 Attribute            | Definition
 ---------------------|-----------
-guests               | The list of [DownloadActivityDetail](#downloadActivityDetail) objects associated with each SafeBox participant other than the Owner.
-owner                | The [DownloadActivityDetail](#downloadActivityDetail) object associated with the SafeBox Owner.
+guests               | The list of [DownloadActivityDetail](#downloadactivitydetail) objects associated with each SafeBox participant other than the Owner.
+owner                | The [DownloadActivityDetail](#downloadactivitydetail) object associated with the SafeBox Owner.
 
 ### DownloadActivityDetail
 Builds an object with all the download activity details for a specific participant of the SafeBox.
-Subset of [DownloadActivity](#DownloadActivity).
+Subset of [DownloadActivity](#downloadactivity).
 All attributes are read only.
 
 Attribute            | Definition
 ---------------------|-----------
 id                   | The unique ID of the download activity detail.
-documents            | The list of [DownloadActivityDocuments](#downloadActivityDocuments) objects associated with the SafeBox participant.
+documents            | The list of [DownloadActivityDocuments](#downloadactivitydocuments) objects associated with the SafeBox participant.
 
 ### DownloadActivityDocument
 Builds an object with all the download activity informations for a specific document regarding a specific participant of the SafeBox.
-Subset of [DownloadActivityDetail](#downloadActivityDetail).
+Subset of [DownloadActivityDetail](#downloadactivitydetail).
 All attributes are read only.
 
 Attribute            | Definition
@@ -711,7 +654,7 @@ updatedAt                         | The last modification date of the enterprise
 
 ### EventHistory
 Builds an object with all Event History information of a SafeBox.
-Subset of [Safebox](#Safebox) object.
+Subset of [Safebox](#safebox) object.
 All attributes are read only.
 
 Attribute            | Definition
@@ -723,7 +666,7 @@ message              | The complete message describing the event, localized acco
 
 ### ExtensionFilter
 Builds an object with the list of allowed or forbidden extensions for SafeBox attachments.
-Subset of [EnterpriseSettings](#EnterpriseSettings).
+Subset of [EnterpriseSettings](#enterprisesettings).
 All attributes are read only.
 
 Attribute            | Definition
@@ -750,7 +693,7 @@ updatedAt            | (read only) The last modification date of the favorite.
 
 ### GuestOptions
 Builds an object to create a subset of additional attributes for the Participant (or retrieve participant information).
-Subset of [Participant](#Participant).
+Subset of [Participant](#participant).
 
 Attribute             | Definition
 ----------------------|-----------
@@ -767,7 +710,7 @@ updatedAt             | (read only) The last modification date of the GuestOptio
 
 ### Message
 Builds an object to retrieve a specific message from an existing SafeBox.
-Subset of [Safebox](#Safebox) object.
+Subset of [Safebox](#safebox) object.
 All attributes are read only.
 
 Attribute            | Definition
@@ -779,11 +722,11 @@ read                 | Indicates whether the message was read or not.
 authorId             | The unique ID of the message author.
 authorType           | The participant type (Owner or other) of the author of the message, regarding the SafeBox.
 createdAt            | The creation date of the message.
-documents            | The list of all [MessageDocument](#MessageDocument) objects representing the attachments of the message.
+documents            | The list of all [MessageDocument](#messagedocument) objects representing the attachments of the message.
 
 ### MessageDocument
 Builds an object to retrieve all information of a specific document (file) from a message within an existing SafeBox.
-Subset of [Message](#Message) object.
+Subset of [Message](#message) object.
 All attributes are read only.
 
 Attribute            | Definition
@@ -796,7 +739,7 @@ url                  | The URL of the file.
 
 ### Participant
 Builds an object to create a participant for the SafeBox (or retrieve participant information).
-Subset of [Safebox](#Safebox) object.
+Subset of [Safebox](#safebox) object.
 
 Attribute            | Definition
 ---------------------|-----------
@@ -811,7 +754,7 @@ messageReadCount     | (read only) The count of read messages of the participant
 messageTotalCount    | (read only) The total count of messages of the participant.
 ### PersonalSecureLink
 Builds an object to retrieve information about the Personal Secure Link of the current user.
-Subset of [UserSettings](#UserSettings).
+Subset of [UserSettings](#usersettings).
 All attributes are read only.
 
 Attribute              | Definition
@@ -871,15 +814,15 @@ closedAt                   | (read only) The date on which the SafeBox was close
 contentDeletedAt           | (read only) The date on which the content of the SafeBox was deleted.
 securityOptions            | (read only) The [SecurityOptions](#securityoptions) object, containing the whole set of Security Options of the SafeBox.
 messages                   | (read only) The list of all [Message](#message) objects of the SafeBox.
-downloadActivity           | (read only) The [DownloadActivity](#downloadActivity) object keeping track of all downloads of the SafeBox.
-eventHistory               | (read only) The [EventHistory](#eventHistory) object keeping track of all events of the SafeBox.
+downloadActivity           | (read only) The [DownloadActivity](#downloadactivity) object keeping track of all downloads of the SafeBox.
+eventHistory               | (read only) The [EventHistory](#eventhistory) object keeping track of all events of the SafeBox.
 
 \* A message is mandatory if no attachments are provided, and at least one attachment is required if no message is provided.
 \*\* A Security Profile is always required to create a SafeBox. If no Security Profile ID is specified, the default Security Profile associated to the user will be used.
 
 ### SecurityOptions
 Builds an object to specify the security options at SafeBox creation, according to the permissions defined in the Security Profile specified in the SafeBox object.
-Subset of [Safebox](#Safebox) object.
+Subset of [Safebox](#safebox) object.
 By default, all attribute values are inherited from the Security Profile.
 Once the SafeBox is created, all attributes are no longer editable.
 
@@ -968,7 +911,7 @@ markAsReadDelay            | The delay (in seconds) after which the messages are
 rememberKey                | Indicates whether the user accepts or not that the participant key is remembered on the client side to allow subsequent accesses to SafeBoxes having Double Encryption enabled.
 defaultFilter              | The default SafeBox list filter as defined by the user.
 recipientLanguage          | The language in which the user needs the SafeBox recipients to be notified by email and access the SafeBox on their side.
-secureLink                 | The [PersonnalSecureLink](#personalSecureLink) object representing the Personal Secure Link information of the user.
+secureLink                 | The [PersonnalSecureLink](#personalsecurelink) object representing the Personal Secure Link information of the user.
 createdAt                  | The creation date of the user settings.
 updatedAt                  | The last modification date of the user settings.
 
